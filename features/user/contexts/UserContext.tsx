@@ -8,8 +8,7 @@ import {
   useCallback,
 } from 'react';
 import useGetUser from '@/features/user/hooks/useGetUser';
-
-type User = { id: number; email: string };
+import { User } from '@/features/user/api/getUser';
 
 type UserContextType = {
   user: User | null;
