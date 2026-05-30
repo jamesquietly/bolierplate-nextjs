@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import getUser from '@/lib/api/user/getUser';
+import getUser from '@/features/user/api/getUser';
 
 const useGetUser = () => {
   return useQuery({

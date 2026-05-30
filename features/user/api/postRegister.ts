@@ -1,4 +1,4 @@
-import api from '@/lib/api/api';
+import api from '@/lib/api';
 
 export interface RegisterDto {
   email: string;

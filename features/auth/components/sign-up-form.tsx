@@ -11,38 +11,49 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { useForm } from '@tanstack/react-form-nextjs';
-import useLogin from '@/lib/api/auth/hooks/useLogin';
+import Link from 'next/link';
+import useRegister from '@/features/user/hooks/useRegister';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 
-const loginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
+const signupSchema = z
+  .object({
+    email: z.email(),
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z
+      .string()
+      .min(6, 'Confirm password must be at least 6 characters'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
-export function LoginForm({
+export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
   const router = useRouter();
-  const { mutate: login } = useLogin(() => {
+  const { mutate: register } = useRegister(() => {
     router.push('/dashboard');
   });
   const form = useForm({
     defaultValues: {
       email: '',
       password: '',
+      confirmPassword: '',
     },
     validators: {
-      onSubmit: loginSchema,
+      onSubmit: signupSchema,
     },
     onSubmit: async ({ value }) => {
-      login({
+      register({
         email: value.email,
         password: value.password,
       });
@@ -53,14 +64,14 @@ export function LoginForm({
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          <CardTitle>Create an account</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your email below to create an account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form
-            id="login-form"
+            id="signup-form"
             onSubmit={(e) => {
               e.preventDefault();
               form.handleSubmit();
@@ -79,8 +90,15 @@ export function LoginForm({
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                       placeholder="m@example.com"
+                      aria-invalid={
+                        field.state.meta.isTouched && !field.state.meta.isValid
+                      }
                       required
                     />
+                    {field.state.meta.isTouched &&
+                      !field.state.meta.isValid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
                   </Field>
                 )}
               />
@@ -98,15 +116,50 @@ export function LoginForm({
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
+                      aria-invalid={
+                        field.state.meta.isTouched && !field.state.meta.isValid
+                      }
                       required
                     />
+                    {field.state.meta.isTouched &&
+                      !field.state.meta.isValid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                  </Field>
+                )}
+              />
+
+              <form.Field
+                name="confirmPassword"
+                children={(field) => (
+                  <Field>
+                    <div className="flex items-center">
+                      <FieldLabel htmlFor={field.name}>
+                        Confirm Password
+                      </FieldLabel>
+                    </div>
+                    <Input
+                      id={field.name}
+                      type="password"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      aria-invalid={
+                        field.state.meta.isTouched && !field.state.meta.isValid
+                      }
+                      required
+                    />
+                    {field.state.meta.isTouched &&
+                      !field.state.meta.isValid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
                   </Field>
                 )}
               />
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit">Sign up</Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="/signup">Sign up</a>
+                  Already have an account? <Link href="/">Login</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

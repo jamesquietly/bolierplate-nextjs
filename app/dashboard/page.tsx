@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@/contexts/UserContext';
+import { useUser } from '@/features/user/contexts/UserContext';
 
 export default function Dashboard() {
   const user = useUser();

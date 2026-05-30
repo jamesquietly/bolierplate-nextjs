@@ -7,7 +7,7 @@ import {
   ReactNode,
   useCallback,
 } from 'react';
-import useGetUser from '@/lib/api/user/hooks/useGetUser';
+import useGetUser from '@/features/user/hooks/useGetUser';
 
 type User = { id: number; email: string };
 
