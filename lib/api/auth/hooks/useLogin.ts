@@ -1,10 +1,15 @@
 import { useMutation } from '@tanstack/react-query';
-import postLogin from '../postLogin';
+import postLogin from '@/lib/api/auth/postLogin';
+import { useUser } from '@/contexts/UserContext';
 
 const useLogin = (onSuccess?: () => void) => {
+  const { setUser } = useUser();
   return useMutation({
     mutationFn: postLogin,
-    onSuccess,
+    onSuccess: (data) => {
+      setUser(data.user);
+      onSuccess?.();
+    },
   });
 };
 

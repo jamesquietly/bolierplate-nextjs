@@ -2,17 +2,14 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, ReactNode } from 'react';
+import { UserProvider } from '@/contexts/UserContext';
 
 export default function Providers({ children }: { children: ReactNode }) {
-  // Create the QueryClient instance inside useState to prevent recreating
-  // the client on every rerender during React state updates.
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
-            // With SSR, we usually want to set some default staleTime
-            // to avoid refetching immediately on the client
             staleTime: 60 * 1000,
           },
         },
@@ -20,6 +17,8 @@ export default function Providers({ children }: { children: ReactNode }) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <UserProvider>{children}</UserProvider>
+    </QueryClientProvider>
   );
 }

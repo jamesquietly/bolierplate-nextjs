@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import postRegister from '../postRegister';
+import postRegister from '@/lib/api/user/postRegister';
 
 const useRegister = (onSuccess?: () => void) => {
   return useMutation({
